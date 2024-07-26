@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'genai',
+    'authUser',
     'sql_query_generator',
 ]
 
