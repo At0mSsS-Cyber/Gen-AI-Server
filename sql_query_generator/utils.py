@@ -8,6 +8,8 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain_community.utilities import SQLDatabase
 from langchain_experimental.sql.base import SQLDatabaseChain
 from langchain_community.llms import GooglePalm
+from langchain_google_genai import GoogleGenerativeAI
+
 
 # Import local few_shots examples and load environment variables
 from .few_shots import few_shots
@@ -23,7 +25,9 @@ def get_few_shot_db_chain():
     db = SQLDatabase.from_uri(f"sqlite:///{db_path}", sample_rows_in_table_info=3)
     
     # Initialize the GooglePalm LLM with the API key and set the temperature
-    llm = GooglePalm(google_api_key=os.environ["GOOGLE_API_KEY"], temperature=0.1)
+    # llm = GooglePalm(google_api_key=os.environ["GOOGLE_API_KEY"], temperature=0.1)
+    llm = GoogleGenerativeAI(model="models/text-bison-001", google_api_key=os.environ["GOOGLE_API_KEY"], temperature=0.1)
+    
 
     # Initialize the HuggingFace embeddings model
     embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
@@ -46,7 +50,7 @@ def get_few_shot_db_chain():
     )
 
     # Define the MySQL prompt template (shortened for brevity)
-    mysql_prompt = """You are a MySQL expert..."""
+    mysql_prompt = """You are a Sqlite expert..."""
 
     # Define the template for each example in the few-shot prompt
     example_prompt = PromptTemplate(
@@ -65,4 +69,5 @@ def get_few_shot_db_chain():
 
     # Create an SQLDatabaseChain with the few-shot prompt and return it
     chain = SQLDatabaseChain.from_llm(llm, db, verbose=True, prompt=few_shot_prompt)
+        
     return chain
